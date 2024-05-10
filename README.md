@@ -1,6 +1,6 @@
 ## Node.js Meme Scraper
 
-Create a cli (Command Line Interface) application that scrapes the **current version** of this website:
+A cli (Command Line Interface) application that scrapes the **current version** of this website:
 
 https://memegen-link-examples-upleveled.netlify.app/
 
