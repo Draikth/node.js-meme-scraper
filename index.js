@@ -2,6 +2,8 @@ import fs from 'node:fs';
 import * as cheerio from 'cheerio';
 import fetch from 'node-fetch';
 
+const url = 'https://memegen-link-examples-upleveled.netlify.app/';
+
 // make "memes" directory
 const directoryPath = './memes';
 
@@ -15,15 +17,37 @@ if (!fs.existsSync(directoryPath)) {
   console.log(`Directory '${directoryPath}' already exists.`);
 }
 
-const response = await fetch(
-  'https://memegen-link-examples-upleveled.netlify.app/',
-);
+async function memeScrape() {
+  try {
+    const response = await fetch(url);
+    const body = await response.text();
+    const $ = cheerio.load(body);
+
+    const memes = [];
+
+    const memeImg = $('#images > div > a').map((i, el) => {
+      const pic = $(el).find('img').attr('src');
+
+      console.log(pic);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+memeScrape();
+/*
+const response = await fetch(url);
 const body = await response.text();
 
-console.log(body);
+//console.log(body);
 
 const $ = cheerio.load(body);
 
-$.html();
+$('#images > div > a > img').each((i, e) => {
+  meme.push($(e).html());
+});
 
 console.log($);
+console.log(meme);
+*/
