@@ -27,4 +27,3 @@ const $ = cheerio.load(body);
 $.html();
 
 console.log($);
-#images > div:nth-child(1) > a > img
