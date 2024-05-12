@@ -69,7 +69,12 @@ memeScrape()
 
     if (memes.length > 0) {
       memes.forEach((memeUrl, index) => {
-        const fileName = `./memes/${index + 1}.jpg`;
+        let fileName;
+        if (index + 1 < 10) {
+          fileName = `./memes/0${index + 1}.jpg`;
+        } else {
+          fileName = `./memes/${index + 1}.jpg`;
+        }
         downloadImage(memeUrl, fileName);
       });
     } else {
