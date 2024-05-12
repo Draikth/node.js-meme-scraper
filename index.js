@@ -1,5 +1,6 @@
 // Import the required libraries
 import fs from 'node:fs';
+import https from 'node:https';
 import * as cheerio from 'cheerio';
 import fetch from 'node-fetch';
 
@@ -19,6 +20,8 @@ if (!fs.existsSync(directoryPath)) {
   console.log(`Directory '${directoryPath}' already exists.`);
 }
 
+const memes = [];
+
 // Use an async function to fetch the data from the required url and get it back as text
 async function memeScrape() {
   try {
@@ -26,13 +29,15 @@ async function memeScrape() {
     const body = await response.text();
     const $ = cheerio.load(body); // initiate cheerio
 
-    const memes = [];
-    // use selector address with cheerio to find where the correct elements containing the src urls are
+    // use selector address with cheerio to find where the correct elements containing the src urls are (in dev tools view, find the element you are looking for and right-click; copy selector)
+
     const memeLinks = $('#images > div > a');
-    // limit the number of links to 10 images by finding the src attributes in the img elements nested in each div on the website.
+
+    // limit the number of links to 10 images by finding the src attributes in the img elements nested in each div on the website, by further narrowing down the location provided by first $(selector)
+
     for (let i = 0; i < memeLinks.length && memes.length < 10; i++) {
       const pic = $(memeLinks[i]).find('img').attr('src');
-      memes.push(pic);
+      memes.push(pic); // put links as elements in the memes array
     }
 
     console.log(memes);
@@ -41,4 +46,36 @@ async function memeScrape() {
   }
 }
 
-memeScrape();
+function downloadImage(urlA, fileName) {
+  https.get(urlA, function (res) {
+    const fileStream = fs.createWriteStream(fileName);
+    res.pipe(fileStream);
+
+    fileStream.on('error', function (error) {
+      console.log(error);
+    });
+
+    fileStream.on('finish', function () {
+      fileStream.close();
+      console.log('Completed');
+    });
+  });
+}
+
+// ESLint kept giving an error that memeScrape was not handling promises correctly so needed to adjust it to the following ".then.catch" format for problem to go away. **needed some ChatGPT for help with fixing the error and structure**
+memeScrape()
+  .then(() => {
+    console.log('Meme scrape successful.');
+
+    if (memes.length > 0) {
+      memes.forEach((memeUrl, index) => {
+        const fileName = `./memes/${index + 1}.jpg`;
+        downloadImage(memeUrl, fileName);
+      });
+    } else {
+      console.log('No memes found.');
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
