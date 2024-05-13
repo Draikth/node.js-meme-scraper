@@ -46,8 +46,8 @@ async function memeScrape() {
   }
 }
 
-function downloadImage(urlA, fileName) {
-  https.get(urlA, function (res) {
+function downloadImage(memeUrl, fileName) {
+  https.get(memeUrl, function (res) {
     const fileStream = fs.createWriteStream(fileName);
     res.pipe(fileStream);
 
@@ -62,7 +62,7 @@ function downloadImage(urlA, fileName) {
   });
 }
 
-// ESLint kept giving an error that memeScrape was not handling promises correctly so needed to adjust it to the following ".then.catch" format for problem to go away. **needed some ChatGPT for help with fixing the error and structure**
+// ESLint kept giving an error that memeScrape was not handling promises correctly so needed to adjust it to the following ".then.catch" format for problem to go away. **needed some ChatGPT for help with fixing the error and structure and to incorporate if loop into it.**
 memeScrape()
   .then(() => {
     console.log('Meme scrape successful.');
